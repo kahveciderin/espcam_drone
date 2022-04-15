@@ -1,0 +1,119 @@
+<!-- Complete project details: https://randomnerdtutorials.com/esp32-web-server-websocket-sliders/ -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ESP IOT DASHBOARD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <div class="topnav">
+    </div>
+    <div class="content">
+        <div class="card-grid">
+            <div class="card">
+                <p class="card-title">Throttle</p>
+                <p class="switch">
+                    <input type="range" id="slider1" min="0" max="255" step="1" value="0" class="slider">
+                </p>
+                <p class="state">Throttle: <span id="sliderValue1">0</span> &percnt;</p>
+            </div>
+            <div class="card">
+                <p class="card-title">Data</p>
+                <div class="data-group">
+                    <div class="motor-group">
+                        <div class="data-item">
+                            <p class="data-label">Pitch</p>
+                            <p class="data-value" id="data-pt">0</p>
+                        </div>
+                        <div class="data-item">
+                            <p class="data-label">Roll</p>
+                            <p class="data-value" id="data-rl">0</p>
+                        </div>
+                        <div class="data-item">
+                            <p class="data-label">Yaw</p>
+                            <p class="data-value" id="data-yw">0</p>
+                        </div>
+                    </div>
+                    <div class="motor-group">
+                        <div class="data-item">
+                            <p class="data-label">LF</p>
+                            <p class="data-value" id="data-lf">0</p>
+                        </div>
+                        <div class="data-item">
+                            <p class="data-label">RF</p>
+                            <p class="data-value" id="data-rf">0</p>
+                        </div>
+                    </div>
+                    <div class="motor-group">
+                        <div class="data-item">
+                            <p class="data-label">LB</p>
+                            <p class="data-value" id="data-lb">0</p>
+                        </div>
+                        <div class="data-item">
+                            <p class="data-label">RB</p>
+                            <p class="data-value" id="data-rb">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="card-title">Pitch PID</p>
+                <div class="pid-config">
+                    <div class="pid-control-group">
+                        <label for="p1">Kp</label>
+                        <input type="number" min="0" value="1" step=".01" id="p1">
+                    </div>
+                    <div class="pid-control-group">
+                        <label for="i1">Ki</label>
+                        <input type="number" min="0" value="0" step=".01" id="i1">
+                    </div>
+                    <div class="pid-control-group">
+                        <label for="d1">Kd</label>
+                        <input type="number" min="0" value="0" step=".01" id="d1">
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="card-title">Roll PID</p>
+                <div class="pid-config">
+                    <div class="pid-control-group">
+                        <label for="p2">Kp</label>
+                        <input type="number" min="0" value="1" step=".01" id="p2">
+                    </div>
+                    <div class="pid-control-group">
+                        <label for="i2">Ki</label>
+                        <input type="number" min="0" value="0" step=".01" id="i2">
+                    </div>
+                    <div class="pid-control-group">
+                        <label for="d2">Kd</label>
+                        <input type="number" min="0" value="0" step=".01" id="d2">
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="card-title">Yaw PID</p>
+                <div class="pid-config">
+                    <div class="pid-control-group">
+                        <label for="p3">Kp</label>
+                        <input type="number" min="0" value="1" step=".01" id="p3">
+                    </div>
+                    <div class="pid-control-group">
+                        <label for="i3">Ki</label>
+                        <input type="number" min="0" value="0" step=".01" id="i3">
+                    </div>
+                    <div class="pid-control-group">
+                        <label for="d3">Kd</label>
+                        <input type="number" min="0" value="0" step=".01" id="d3">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+</body>
+
+</html>
