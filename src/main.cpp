@@ -8,9 +8,11 @@
 
 #include "SPIFFS.h"
 #include "Wire.h"
+#include "soc/rtc_cntl_reg.h"
+#include "soc/soc.h"
 
 const char *ssid = "duron";
-const char *password = "12345678";
+// const char *password = "12345678";
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
@@ -265,8 +267,7 @@ class DroneState {
     pitch *= 180.0 / PI;
 
     pitch -= 8.0;
-    roll += 2.5;
-
+    roll += 5.9 ;
   }
 
   void tick() {
@@ -279,12 +280,13 @@ class DroneState {
     this->pitch_pid.Compute();
     this->roll_pid.Compute();
     this->yaw_pid.Compute();
-    Serial.print(millis() / 1000.0);
-    Serial.print(",");
-    Serial.print(this->pitch);
-    Serial.print(",");
-    Serial.println(this->pitch_out);
-    int max_correction = this->motor_thr; // this->motor_thr == 0 ? 0 : 65535;
+    // Serial.print(millis() / 1000.0);
+    // Serial.print(",");
+    // Serial.print(this->pitch);
+    // Serial.print(",");
+    // Serial.println(this->pitch_out);
+    int max_correction =
+        /* this->motor_thr; */ this->motor_thr == 0 ? 0 : 65535;
 
     motor_speed[LF_MOTOR] =
         motor_thr + constrain(-(abs(pitch_error) / total_error) * pitch_out -
@@ -439,6 +441,8 @@ void initWebSocket() {
 }
 
 void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);  // disable   detector
+
   ledcSetup(LF_MOTOR, PWM_FREQ, 8);
   ledcAttachPin(LF_MOTOR_PIN, LF_MOTOR);
   ledcSetup(RF_MOTOR, PWM_FREQ, 8);
@@ -471,7 +475,8 @@ void setup() {
 
   initFS();
   Serial.print("Setting AP (Access Point)…");
-  WiFi.softAP(ssid, password);
+  // WiFi.softAP(ssid, password);
+  WiFi.softAP(ssid);
 
   IPAddress IP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
@@ -486,6 +491,11 @@ void setup() {
 
   server.begin();
   Drone.motor_thr = 0;
+
+  Drone.motor_thr = 0;
+  Drone.pitch_pid.SetTunings(1, 0, 0, P_ON_E);
+  Drone.roll_pid.SetTunings(1, 0, 0, P_ON_E);
+  Drone.yaw_pid.SetTunings(0, 0, 0, P_ON_E);
 }
 
 long last_debug_time = 0;
@@ -499,14 +509,19 @@ void loop() {
   ledcWrite(LB_MOTOR, Drone.motor_speed[LB_MOTOR]);
   ledcWrite(RB_MOTOR, Drone.motor_speed[RB_MOTOR]);
 
-  // Serial.print("Motor speed: ");
-  // Serial.print(Drone.motor_speed[LF_MOTOR]);
-  // Serial.print(" ");
-  // Serial.print(Drone.motor_speed[RF_MOTOR]);
-  // Serial.print(" ");
-  // Serial.print(Drone.motor_speed[LB_MOTOR]);
-  // Serial.print(" ");
-  // Serial.println(Drone.motor_speed[RB_MOTOR]);
+  Serial.print("Motor speed: LF: ");
+  Serial.print(Drone.motor_speed[LF_MOTOR]);
+  Serial.print("\tRF: ");
+  Serial.print(Drone.motor_speed[RF_MOTOR]);
+  Serial.print("\tLB: ");
+  Serial.print(Drone.motor_speed[LB_MOTOR]);
+  Serial.print("\tRB: ");
+  Serial.print(Drone.motor_speed[RB_MOTOR]);
+  Serial.print("\t\tPitch: ");
+  Serial.print(Drone.pitch);
+  Serial.print("\tRoll: ");
+  Serial.println(Drone.roll);
+
   if (millis() - last_debug_time >= 100) {
     ws.textAll(get_debug_state());
     last_debug_time = millis();
